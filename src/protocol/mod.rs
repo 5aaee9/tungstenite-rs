@@ -756,7 +756,7 @@ mod tests {
         let mut socket = WebSocket::from_raw_socket(WriteMoc(incoming), Role::Client, None);
         assert_eq!(socket.read_message().unwrap(), Message::Ping(vec![1, 2]));
         assert_eq!(socket.read_message().unwrap(), Message::Pong(vec![3]));
-        assert_eq!(socket.read_message().unwrap(), Message::Text("Hello, World!".into()));
+        assert_eq!(socket.read_message().unwrap(), Message::Binary("Hello, World!".into()));
         assert_eq!(socket.read_message().unwrap(), Message::Binary(vec![0x01, 0x02, 0x03]));
     }
 
