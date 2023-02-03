@@ -39,7 +39,7 @@ mod string_collect {
                     if let Ok(text) = result {
                         self.data.push_str(text);
                     } else {
-                        return Err(Error::Utf8);
+                        return Err(Error::Utf8(Some(result.expect_err("err").into())));
                     }
                 } else {
                     input = &[];
@@ -60,7 +60,7 @@ mod string_collect {
                     }
                     Err(DecodeError::Invalid { valid_prefix, .. }) => {
                         self.data.push_str(valid_prefix);
-                        Err(Error::Utf8)
+                        Err(Error::Utf8(Some(self.data.clone().into())))
                     }
                 }
             } else {
@@ -70,7 +70,7 @@ mod string_collect {
 
         pub fn into_string(self) -> Result<String> {
             if self.incomplete.is_some() {
-                Err(Error::Utf8)
+                Err(Error::Utf8(Some(self.data.into())))
             } else {
                 Ok(self.data)
             }

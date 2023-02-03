@@ -58,7 +58,7 @@ pub enum Error {
     SendQueueFull(Message),
     /// UTF coding error.
     #[error("UTF-8 encoding error")]
-    Utf8,
+    Utf8(Option<Vec<u8>>),
     /// Invalid URL.
     #[error("URL error: {0}")]
     Url(#[from] UrlError),
@@ -74,13 +74,13 @@ pub enum Error {
 
 impl From<str::Utf8Error> for Error {
     fn from(_: str::Utf8Error) -> Self {
-        Error::Utf8
+        Error::Utf8(None)
     }
 }
 
 impl From<string::FromUtf8Error> for Error {
-    fn from(_: string::FromUtf8Error) -> Self {
-        Error::Utf8
+    fn from(err: string::FromUtf8Error) -> Self {
+        Error::Utf8(Some(err.as_bytes().into()))
     }
 }
 
@@ -101,7 +101,7 @@ impl From<http::header::InvalidHeaderName> for Error {
 #[cfg(feature = "handshake")]
 impl From<http::header::ToStrError> for Error {
     fn from(_: http::header::ToStrError) -> Self {
-        Error::Utf8
+        Error::Utf8(None)
     }
 }
 
